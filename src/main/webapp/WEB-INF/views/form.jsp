@@ -87,9 +87,7 @@ header {
 		
 	<hr>
 
-	<form:form method="POST" action="addMemo" modelAttribute="memo">
-		
-		
+	<form:form method="POST" action="addMemo" modelAttribute="memo">		
 		<table>
 			<tr>
 				<td width=20></td>
