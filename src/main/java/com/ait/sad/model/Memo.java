@@ -4,6 +4,8 @@ import java.sql.Date;
 
 public class Memo {
 
+	private int id;
+
 	private String topic;
 
 	private String detail;
@@ -62,6 +64,14 @@ public class Memo {
 
 	public void setDateRemind(Date dateRemind) {
 		this.dateRemind = dateRemind;
+	}
+
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
 	}
 
 }

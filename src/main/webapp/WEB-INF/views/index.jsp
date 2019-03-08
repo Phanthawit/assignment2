@@ -155,7 +155,7 @@ ul li a{
 			<li>
 		      <a href="#">
 		      	<div style="position: top: 5px; float: right; ">
-		      		<button class="btn btn-danger" ><i class="fa fa-trash-alt"></i></button>
+		      		<button class="btn btn-danger" onclick="location.href='/delete/${item.id}'"><i class="fa fa-trash-alt"></i></button>
 	    		</div>	      	
 		        <h2>name : ${item.name}</h2>
 		        <H3>${item.topic}</H3>
