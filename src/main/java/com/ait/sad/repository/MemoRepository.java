@@ -1,136 +1,103 @@
-package com.ait.sad.repository;
+package com.ait.sad.controller;
 
 import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.Date;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+
+import javax.validation.Valid;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.ui.ModelMap;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.ait.sad.DbManager;
 import com.ait.sad.model.Memo;
+import com.ait.sad.model.MemoBuilder;
+import com.ait.sad.model.MemoFactory;
+import com.ait.sad.model.MemoMap;
+import com.ait.sad.repository.MemoRepository;
+import com.ait.sad.model.Weather;
+import com.ait.sad.controller.FacadeController;
 
-public class MemoRepository {
+@Controller
+public class MainController {
 
-	public MemoRepository() {
+	MemoRepository memoRepository;
 
+	@RequestMapping("/")
+	public String index(Model model) {
+		memoRepository = new MemoRepository();
+		Weather weather = new Weather();
+
+		// Memo memo = memoRepository.findOneById(1);
+		ArrayList<Memo> list = memoRepository.findAll();
+		model.addAttribute("memos", list);
+		// Weather
+		ArrayList<Weather> listWeather = weather.findAll();
+		model.addAttribute("weather", listWeather);
+		// this is jsp file name
+		return "index";
 	}
 
-	public void save(Memo memo) {
-
-		DbManager db = new DbManager();
-		Connection conn = db.getConnection();
-
-		PreparedStatement stat;
-		try {
-			conn = new DbManager().getConnection();
-
-			stat = conn.prepareStatement(
-					"insert into memo( name,topic, detail,  dateCreate,dateUpdate,dateRemind) values (?, ?, ?, ?,?,?)");
-
-			stat.setString(1, memo.getName());
-			stat.setString(2, memo.getTopic());
-			stat.setString(3, memo.getDetail());
-			stat.setDate(4, memo.getDateCreate());
-			stat.setDate(5, memo.getDateUpdate());
-			stat.setDate(6, memo.getDateRemind());
-
-			stat.executeUpdate();
-
-			conn.close();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} finally {
-			db.close();
-
-		}
-
+	@RequestMapping("/form")
+	public String formPage(Model model) {
+		model.addAttribute("memo", new MemoMap());
+		return "form";
 	}
 
-	public Memo findOneById(int id) {
-		PreparedStatement ps = null;
-		ResultSet rs = null;
-
-		DbManager db = new DbManager();
-		Connection conn = db.getConnection();
-
-		try {
-			ps = conn.prepareStatement("select topic, detail,  dateCreate, dateUpdate from memo where id =?  limit 1");
-			ps.setInt(1, id);
-
-			rs = ps.executeQuery();
-
-			if (rs != null && rs.next()) {
-
-				Memo memo = new Memo();
-				memo.setTopic(rs.getString("topic"));
-				memo.setDetail(rs.getString("detail"));
-
-				// memo.setDateCreate(rs.getDate("dateCreate"));
-				// memo.setDateUpdate(rs.getDate("dateUpdate"));
-				conn.close();
-				return memo;
-
-			} else {
-				conn.close();
-				return null;
-			}
-
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} finally {
-			db.close();
+	@RequestMapping(value = "/addMemo", method = RequestMethod.POST)
+	public String submitMemo(@Valid @ModelAttribute("memo") MemoMap memoMap,
+			BindingResult result, ModelMap model) {
+		if (result.hasErrors()) {
+			return "error";
 		}
-		return null;
+
+		memoRepository = new MemoRepository();
+		memoRepository.save(new MemoFactory().makeMemo(memoMap));
+		ArrayList<Memo> list = memoRepository.findAll();
+		model.addAttribute("memos", list);
+		return "redirect:" + "/";
 	}
 
-	public ArrayList<Memo> findAll() {
-		PreparedStatement ps = null;
-		ResultSet rs = null;
+	// Delete Memo
+	@RequestMapping("/delete/{id}")
+	public String index(@PathVariable("id") int id, Model model) {
+		memoRepository = new MemoRepository();
+		memoRepository.delete(id);
+		return "redirect:" + "/";
+	}
 
+	// //////////////////////////////////////////////////////
+
+	// ********** END OF WORKING CODE
+
+	// //////////////////////////////////////////////////////
+
+	private boolean checkConnectDb() {
+		String strDb;
 		DbManager db = new DbManager();
 		Connection conn = db.getConnection();
-
-		ArrayList<Memo> memoList = new ArrayList<Memo>();
-
-		try {
-			ps = conn.prepareStatement("select topic, name, detail,  dateCreate, dateUpdate,dateRemind from memo");
-
-			rs = ps.executeQuery();
-
-			System.out.println("111111111111");
-			while (rs.next()) {
-
-				Memo memo = new Memo();
-
-				memo.setTopic(rs.getString("topic"));
-				memo.setDetail(rs.getString("detail"));
-				memo.setName(rs.getString("name"));
-				// System.out.println(">>>>> "+rs.getDate("dateCreate").getTime());
-				if (rs.getDate("dateCreate") != null)
-					memo.setDateCreate(rs.getDate("dateCreate"));
-				if (rs.getDate("dateUpdate") != null)
-					memo.setDateUpdate(rs.getDate("dateUpdate"));
-				if (rs.getDate("dateRemind") != null)
-					memo.setDateRemind(rs.getDate("dateRemind"));
-				
-				memoList.add(memo);
-
-			}
-			System.out.println("2222222222");
-
-			conn.close();
-			return memoList;
-
-		} catch (
-
-		SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} finally {
+		if (conn == null) {
+			strDb = "no connection";
+			System.out.println(strDb);
 			db.close();
+			return false;
+		} else {
+			strDb = "connection successful";
+			System.out.println(strDb);
+			db.close();
+			return true;
 		}
-		return null;
+
 	}
 }
