@@ -10,7 +10,7 @@ public class MemoFactory {
 	public Memo makeMemo(MemoMap memoMap) {
 		Date dateRemind = null;
 		if (memoMap.dateRemind != null || memoMap.dateRemind.isEmpty());
-			dateRemind = getSqlDate(memoMap.dateRemind, "MM/dd/yyyy");
+			dateRemind = getSqlDate(memoMap.dateRemind, "yyyy-MM-dd");
 
 		Memo memo = new MemoBuilder().setName(memoMap.name).setTopic(memoMap.topic).setDetail(memoMap.detail)
 				.setDateCreate(new java.sql.Date(Calendar.getInstance().getTimeInMillis())).setDateUpdate(null)

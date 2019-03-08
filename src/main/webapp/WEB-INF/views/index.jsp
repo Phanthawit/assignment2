@@ -19,9 +19,7 @@
   <link  href="http://fonts.googleapis.com/css?
 	family=Reenie+Beanie:regular" 
 	rel="stylesheet"
-	type="text/css">
-  
-  
+	type="text/css">  
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css" integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
@@ -135,10 +133,9 @@ ul li a{
 <!-- end of css -->
 
 	<div class="jumbotron text-center">
-		  <h1 style="color:black;margin-left:30px;"><i class="far fa-calendar-minus"></i> Welcome to Memo</h1>
-		  <center>
-		  		 
-		  		<a type="button" class="btn btn-warning" href="/form">add note</a> 		
+		  <h1 style="color:black;margin-left:30px;"><i class="far fa-comments"></i> Welcome to Memo</h1>
+		  <center>		  		 
+		  		<a type="button" class="btn btn-warning" href="/form"><i class="far fa-calendar-plus"></i> Add new note</a> 		
 		  </center>  
 	</div>
 
@@ -146,7 +143,7 @@ ul li a{
 	
 	<!-- weather -->
 	<c:forEach items="${weather}" var="item">
-		<h1>The weather : ${item.weather_name}</h1>
+		<h1><i class="fas fa-cloud-sun-rain"></i> The weather of today : ${item.weather_name}</h1>
 		<H3>THE weather detail : ${item.weather_detail}</H3>
 	</c:forEach>	
 	
@@ -157,8 +154,8 @@ ul li a{
 		      	<div style="position: top: 5px; float: right; ">
 		      		<button class="btn btn-danger" onclick="location.href='/delete/${item.id}'"><i class="fa fa-trash-alt"></i></button>
 	    		</div>	      	
-		        <h2>name : ${item.name}</h2>
-		        <H3>${item.topic}</H3>
+		        <h2><i class="fas fa-user-alt"></i> : ${item.name}</h2>
+		        <H3> ${item.topic}</H3>
 		        <p>${item.detail}</p>
 		        <div style="position:  bottom: 5px; ">
 			        <c:choose>
